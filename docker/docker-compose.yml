@@ -1,0 +1,6 @@
+services:
+  flash-card: 
+    build:
+      context: .
+    volumes:
+      - ../app:/app  
