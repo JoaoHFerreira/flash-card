@@ -1,6 +1,22 @@
 services:
-  flash-card: 
+  flash-card:
     build:
       context: .
+    env_file:
+      - .env 
     volumes:
-      - ../app:/app  
+      - ../app:/app
+    depends_on:
+      - db
+
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: flash_card_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data:/var/lib/postgresql/data

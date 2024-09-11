@@ -23,3 +23,29 @@ The following command is used for running and debugging the Rust code. Think of 
 ```bash
 docker-compose run --rm -it flash-card cargo run
 ```
+
+## Prepare ORM
+```
+diesel migration setup
+```
+
+## Generate Folders
+```
+diesel migration generate create_posts
+```
+After run `generate` command fill the created sql files with respective tables, in up and down.sql
+
+## Create tables
+```
+diesel migration run
+```
+
+## Remove last change
+```
+diesel migration redo
+```
+
+## Connect to database
+```
+docker-compose exec db psql -U user -d flash_card_db
+```
