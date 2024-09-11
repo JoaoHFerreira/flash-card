@@ -2,5 +2,7 @@ FROM rust:latest
 
 WORKDIR /app
 
-# Remove the build step from Dockerfile since the volume will be mounted at runtime
+RUN cargo install diesel_cli
+RUN cargo install diesel_cli --no-default-features --features postgres
+
 CMD ["cargo", "run", "--release"]
