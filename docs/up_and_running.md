@@ -49,3 +49,7 @@ diesel migration redo
 ```
 docker-compose exec db psql -U user -d flash_card_db
 ```
+
+```
+cargo run --bin name_of_the_bin_folder
+```
