@@ -5,6 +5,8 @@ use diesel::prelude::*;
 use dotenvy::dotenv;
 use std::env;
 use self::models::{NewPost, Post};
+use self::models::{LearningTopic, NewLearningTopic};
+
 
 pub fn establish_connection() -> PgConnection {
     dotenv().ok();
@@ -23,6 +25,18 @@ pub fn create_post(conn: &mut PgConnection, title: &str, body: &str) -> Post {
     diesel::insert_into(posts::table)
         .values(&new_post)
         .returning(Post::as_returning())
+        .get_result(conn)
+        .expect("Error saving new post")
+}
+
+pub fn create_learning_topic(conn: &mut PgConnection, subject: &str) -> LearningTopic {
+    use crate::schema::learning_topic;
+
+    let new_learning_topic = NewLearningTopic { subject };
+
+    diesel::insert_into(learning_topic::table)
+        .values(&new_learning_topic)
+        .returning(LearningTopic::as_returning())
         .get_result(conn)
         .expect("Error saving new post")
 }

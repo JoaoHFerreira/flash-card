@@ -1,31 +1,31 @@
 -- Table: flash_card
 CREATE TABLE flash_card (
-    id UUID PRIMARY KEY, 
+    id SERIAL PRIMARY KEY, 
     question TEXT NOT NULL,
     answer TEXT NOT NULL,
-    learning_topic_id UUID REFERENCES learning_topic(id),
-    practice_schedule_id UUID REFERENCES practice_schedule(id)
+    learning_topic_id INTEGER REFERENCES learning_topic(id) NOT NULL,
+    practice_schedule_id INTEGER REFERENCES practice_schedule(id) NOT NULL
 );
 CREATE INDEX idx_flash_card_learning_topic_id ON flash_card(learning_topic_id);
 CREATE INDEX idx_flash_card_practice_schedule_id ON flash_card(practice_schedule_id);
 
 -- Table: learning_topic
 CREATE TABLE learning_topic (
-    id UUID PRIMARY KEY, 
+    id SERIAL PRIMARY KEY, 
     subject TEXT NOT NULL
 );
 
 -- Table: practice_schedule
 CREATE TABLE practice_schedule (
-    id UUID PRIMARY KEY, 
+    id SERIAL PRIMARY KEY, 
     current_practice_day TIMESTAMP NOT NULL,
     next_practice_day TIMESTAMP NOT NULL
 );
 
 -- Table: historical_acceptances
 CREATE TABLE historical_acceptances (
-    id UUID PRIMARY KEY,
-    flash_card_id UUID REFERENCES flash_card(id),
+    id SERIAL PRIMARY KEY,
+    flash_card_id INTEGER REFERENCES flash_card(id) NOT NULL,
     is_right BOOLEAN NOT NULL,
     test_date TIMESTAMP NOT NULL
 );
