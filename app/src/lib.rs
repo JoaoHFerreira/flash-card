@@ -2,10 +2,12 @@ pub mod models;
 pub mod schema;
 
 use diesel::prelude::*;
+use chrono::NaiveDateTime;
 use dotenvy::dotenv;
 use std::env;
 use self::models::{NewPost, Post};
 use self::models::{LearningTopic, NewLearningTopic};
+use self::models::{PracticeSchedule, NewPracticeSchedule};
 
 
 pub fn establish_connection() -> PgConnection {
@@ -37,6 +39,22 @@ pub fn create_learning_topic(conn: &mut PgConnection, subject: &str) -> Learning
     diesel::insert_into(learning_topic::table)
         .values(&new_learning_topic)
         .returning(LearningTopic::as_returning())
+        .get_result(conn)
+        .expect("Error saving new post")
+}
+
+pub fn create_practice_schedule(
+    conn: &mut PgConnection,
+    current_practice_day: NaiveDateTime,
+    next_practice_day: NaiveDateTime,
+) -> PracticeSchedule {
+    use crate::schema::practice_schedule;
+
+    let new_practice_schedule = NewPracticeSchedule { current_practice_day, next_practice_day };
+
+    diesel::insert_into(practice_schedule::table)
+        .values(&new_practice_schedule)
+        .returning(PracticeSchedule::as_returning())
         .get_result(conn)
         .expect("Error saving new post")
 }
