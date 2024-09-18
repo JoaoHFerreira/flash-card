@@ -2,6 +2,7 @@ use diesel::prelude::*;
 use crate::schema::{posts};
 use crate::schema::{learning_topic};
 use crate::schema::{practice_schedule};
+use crate::schema::{flash_card};
 use chrono::NaiveDateTime;
 
 
@@ -52,4 +53,25 @@ pub struct PracticeSchedule {
 pub struct NewPracticeSchedule {
     pub current_practice_day: NaiveDateTime,
     pub next_practice_day: NaiveDateTime,
+}
+
+
+#[derive(Queryable, Selectable)]
+#[diesel(table_name = crate::schema::flash_card)]
+#[diesel(check_for_backend(diesel::pg::Pg))]
+pub struct FlashCard {
+    pub id: i32,
+    pub question: String,
+    pub answer: String,
+    pub learning_topic_id: i32,
+    pub practice_schedule_id: i32,
+}
+
+#[derive(Insertable)]
+#[diesel(table_name = flash_card)]
+pub struct NewFlashCard {
+    pub question: String,
+    pub answer: String,
+    pub learning_topic_id: i32,
+    pub practice_schedule_id: i32,
 }

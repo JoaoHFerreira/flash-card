@@ -8,6 +8,7 @@ use std::env;
 use self::models::{NewPost, Post};
 use self::models::{LearningTopic, NewLearningTopic};
 use self::models::{PracticeSchedule, NewPracticeSchedule};
+use self::models::{FlashCard, NewFlashCard};
 
 
 pub fn establish_connection() -> PgConnection {
@@ -55,6 +56,29 @@ pub fn create_practice_schedule(
     diesel::insert_into(practice_schedule::table)
         .values(&new_practice_schedule)
         .returning(PracticeSchedule::as_returning())
+        .get_result(conn)
+        .expect("Error saving new post")
+}
+
+pub fn create_flash_card(
+    conn: &mut PgConnection,
+    question: String,
+    answer: String,
+    learning_topic_id: i32,
+    practice_schedule_id: i32,
+) -> FlashCard {
+    use crate::schema::flash_card;
+
+    let new_flash_card =NewFlashCard { 
+        question,
+        answer,
+        learning_topic_id,
+        practice_schedule_id 
+    };
+
+    diesel::insert_into(flash_card::table)
+        .values(&new_flash_card)
+        .returning(FlashCard::as_returning())
         .get_result(conn)
         .expect("Error saving new post")
 }
