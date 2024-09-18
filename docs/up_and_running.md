@@ -1,55 +1,81 @@
-# Up and Running with Docker and Rust
+# Key Docker and Rust Commands
 
-## Navigating to the Docker Directory
+# Table of Contents
+1. [Key Docker and Rust Commands](#key-docker-and-rust-commands)
+   - [Docker Commands](#docker-commands)
+     1. [Build and start containers](#build-and-start-containers)
+     2. [Run Rust code](#run-rust-code)
+     3. [Access bash in container for debugging](#access-bash-in-container-for-debugging)
+     4. [Stop containers](#stop-containers)
+     5. [View container logs](#view-container-logs)
+   - [Database Operations (Diesel ORM)](#database-operations-diesel-orm)
+     1. [Set up Diesel ORM](#set-up-diesel-orm)
+     2. [Generate new migration](#generate-new-migration)
+     3. [Run migrations](#run-migrations)
+     4. [Undo last migration](#undo-last-migration)
+     5. [Connect to database](#connect-to-database)
+2. [Creating a New Action](#creating-a-new-action)
 
-Before running any commands, make sure you navigate to the Docker directory. Use the following command:
 
-```bash
-cd docker
-```
 
-## Creating the Docker Image
+## Docker Commands
 
-Once you're in the Docker directory, you can create the Docker image based on the `Dockerfile` and also run the Docker containers using `docker-compose`:
+1. Build and start containers:
+   ```
+   docker-compose up --build
+   ```
 
-```bash
-docker-compose up --build
-```
+2. Run Rust code:
+   ```
+   docker-compose run --rm -it flash-card cargo run
+   ```
 
-## Running Rust Code
+3. Access bash in container for debugging:
+   ```
+   docker-compose exec flash-card bash
+   ```
 
-The following command is used for running and debugging the Rust code. Think of the `docker-compose run --rm -it flash-card` part as being the root terminal, and the remaining part as the actual Rust command:
+4. Stop containers:
+   ```
+   docker-compose down
+   ```
 
-```bash
-docker-compose run --rm -it flash-card cargo run
-```
+5. View container logs:
+   ```
+   docker-compose logs
+   ```
 
-## Prepare ORM
-```
-diesel migration setup
-```
+## Database Operations (Diesel ORM)
 
-## Generate Folders
-```
-diesel migration generate create_posts
-```
-After run `generate` command fill the created sql files with respective tables, in up and down.sql
+1. Set up Diesel ORM:
+   ```
+   diesel migration setup
+   ```
 
-## Create tables
-```
-diesel migration run
-```
+2. Generate new migration:
+   ```
+   diesel migration generate create_posts
+   ```
 
-## Remove last change
-```
-diesel migration redo
-```
+3. Run migrations:
+   ```
+   diesel migration run
+   ```
 
-## Connect to database
-```
-docker-compose exec db psql -U user -d flash_card_db
-```
+4. Undo last migration:
+   ```
+   diesel migration redo
+   ```
 
-```
-cargo run --bin name_of_the_bin_folder
-```
+5. Connect to database:
+   ```
+   docker-compose exec db psql -U user -d flash_card_db
+   ```
+
+## 2. [Creating a New Action](#creating-a-new-action)
+The flow is:
+1. Create the models based on schema and test;
+2. After everything ok in previous step, add the funcionality into lib.rs and test;
+3. After everything ok in previous step, add the action and test;
+4. After everything ok in previous step, then we are ready to create the PR
+
