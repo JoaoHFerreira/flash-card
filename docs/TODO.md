@@ -26,3 +26,4 @@ After run todos
 4. Add error handlers;
 5. Convert it into API
 6. AI features
+7. Since is concepts the historical part should be a range and not a bool true and falase.
