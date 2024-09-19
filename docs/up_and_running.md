@@ -72,6 +72,12 @@
    docker-compose exec db psql -U user -d flash_card_db
    ```
 
+6. Running Entire App
+   ```
+   cargo run --bin flash_card
+   ```
+
+
 ## 2. [Creating a New Action](#creating-a-new-action)
 The flow is:
 1. Create the models based on schema and test;

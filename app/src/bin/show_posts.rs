@@ -7,7 +7,7 @@ fn main() {
 
     let connection = &mut establish_connection();
     let results = posts
-        .filter(published.eq(true))
+        .filter(published.eq(false))
         .limit(5)
         .select(Post::as_select())
         .load(connection)

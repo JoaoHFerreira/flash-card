@@ -82,3 +82,16 @@ pub fn create_flash_card(
         .get_result(conn)
         .expect("Error saving new post")
 }
+
+pub fn batch_flash_card(
+    conn: &mut PgConnection,
+    new_flash_cards: Vec<NewFlashCard>
+) -> Vec<FlashCard> {
+    use crate::schema::flash_card;
+
+    diesel::insert_into(flash_card::table)
+        .values(&new_flash_cards)
+        .returning(FlashCard::as_returning())
+        .get_results(conn)
+        .expect("Error saving new flash cards")
+}
