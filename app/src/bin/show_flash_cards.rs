@@ -2,8 +2,11 @@ use self::models::*;
 use diesel::prelude::*;
 use flash_card::*;
 use std::io;
+use chrono::Utc;
 
 fn main() {
+    let connection = &mut establish_connection();
+
     let results = get_daily_flash_cards();
     for card in results {
         println!("ID: {}", card.id);
@@ -21,10 +24,21 @@ fn main() {
         io::stdin().read_line(&mut user_rating).expect("Failed to read line");
         
         let rating: i32 = user_rating.trim_end().parse::<i32>().unwrap();
-        
-        println!("Your rating: {}", rating);
-        println!("Practice Schedule ID: {}", card.practice_schedule_id);
-        println!("--------------------");
+        let test_date = Utc::now().naive_utc();
+
+        let historical_register = create_historical_acceptances(
+            connection,
+            card.id,
+            rating,
+            user_answer.trim().to_string(),
+            test_date,
+        );
+
+        println!("\nCreated historic with id {}", historical_register.id);
+
+
+
+
     }
 }
 

@@ -8,6 +8,7 @@ use std::env;
 use self::models::{LearningTopic, NewLearningTopic};
 use self::models::{PracticeSchedule, NewPracticeSchedule};
 use self::models::{FlashCard, NewFlashCard};
+use self::models::{HistoricalAcceptances, NewHistoricalAcceptances};
 
 
 pub fn establish_connection() -> PgConnection {
@@ -81,4 +82,25 @@ pub fn batch_flash_card(
         .returning(FlashCard::as_returning())
         .get_results(conn)
         .expect("Error saving new flash cards")
+}
+
+pub fn create_historical_acceptances(
+    conn: &mut PgConnection,
+    flash_card_id: i32,
+    answer_rate: i32,
+    given_answer: String,
+    test_date: NaiveDateTime,
+) -> HistoricalAcceptances {
+    use crate::schema::historical_acceptances;
+    let new_historical_acceptance = NewHistoricalAcceptances {
+        flash_card_id,
+        answer_rate,
+        given_answer,
+        test_date,
+    };
+    diesel::insert_into(historical_acceptances::table)
+        .values(&new_historical_acceptance)
+        .returning(HistoricalAcceptances::as_returning())
+        .get_result(conn)
+        .expect("Error saving new historical acceptance")
 }

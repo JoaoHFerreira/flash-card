@@ -2,6 +2,7 @@ use diesel::prelude::*;
 use crate::schema::{learning_topic};
 use crate::schema::{practice_schedule};
 use crate::schema::{flash_card};
+use crate::schema::{historical_acceptances};
 use chrono::NaiveDateTime;
 
 
@@ -56,4 +57,25 @@ pub struct NewFlashCard {
     pub answer: String,
     pub learning_topic_id: i32,
     pub practice_schedule_id: i32,
+}
+
+
+#[derive(Queryable, Selectable)]
+#[diesel(table_name = crate::schema::historical_acceptances)]
+#[diesel(check_for_backend(diesel::pg::Pg))]
+pub struct HistoricalAcceptances {
+    pub id: i32,
+    pub flash_card_id: i32,
+    pub answer_rate: i32,
+    pub given_answer: String,
+    pub test_date: NaiveDateTime,
+}
+
+#[derive(Insertable)]
+#[diesel(table_name = historical_acceptances)]
+pub struct NewHistoricalAcceptances {
+    pub flash_card_id: i32,
+    pub answer_rate: i32,
+    pub given_answer: String,
+    pub test_date: NaiveDateTime,
 }
