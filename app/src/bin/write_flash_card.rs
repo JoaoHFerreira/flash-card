@@ -30,18 +30,14 @@ fn main() {
 
     let current_practice_day = Utc::now().naive_utc();
     let next_practice_day = current_practice_day + Duration::days(1);
-    let practice_schedule = create_practice_schedule(
-        connection,
-        current_practice_day,
-        next_practice_day,
-    );
 
     let flash_card = create_flash_card(
         connection,
         question.to_string(),
         answer.to_string(),
         learn_topic[0].id,
-        practice_schedule.id,
+        current_practice_day,
+        next_practice_day,
     );
 
     println!("\nCreated flash_card  with id {}", flash_card.id);

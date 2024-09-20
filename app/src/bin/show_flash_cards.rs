@@ -2,7 +2,7 @@ use self::models::*;
 use diesel::prelude::*;
 use flash_card::*;
 use std::io;
-use chrono::Utc;
+use chrono::{Utc, Duration};
 
 fn main() {
     let connection = &mut establish_connection();
@@ -34,25 +34,31 @@ fn main() {
             test_date,
         );
 
+        let current_practice_day = card.next_practice_day;
+        let next_practice_day = current_practice_day + Duration::days(1);
+        
+        let _ = update_flash_card_by_id(
+            connection,
+            card.id,
+            current_practice_day,
+            next_practice_day,
+        );
+
         println!("\nCreated historic with id {}", historical_register.id);
-
-
-
+        println!("\nCreated historic with id {}", card.current_practice_day);
 
     }
 }
 
 fn get_daily_flash_cards() -> Vec<FlashCard> {
     use self::schema::flash_card::dsl::*;
-    use self::schema::practice_schedule::dsl::*;
     use diesel::dsl::sql;
     use diesel::dsl::now;
 
     let connection = &mut establish_connection();
-    let limit = 30;
+    let limit = 1;
 
     flash_card
-        .inner_join(practice_schedule)
         .filter(current_practice_day.le(now))
         .order_by(sql::<diesel::sql_types::Text>("RANDOM()"))
         .limit(limit)

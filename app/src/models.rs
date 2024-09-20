@@ -1,6 +1,5 @@
 use diesel::prelude::*;
 use crate::schema::{learning_topic};
-use crate::schema::{practice_schedule};
 use crate::schema::{flash_card};
 use crate::schema::{historical_acceptances};
 use chrono::NaiveDateTime;
@@ -13,29 +12,13 @@ use chrono::NaiveDateTime;
 pub struct LearningTopic {
     pub id: i32,
     pub subject: String,
+    pub created_at: Option<NaiveDateTime>,
 }
 
 #[derive(Insertable)]
 #[diesel(table_name = learning_topic)]
 pub struct NewLearningTopic<'a> {
     pub subject: &'a str,
-}
-
-
-#[derive(Queryable, Selectable)]
-#[diesel(table_name = crate::schema::practice_schedule)]
-#[diesel(check_for_backend(diesel::pg::Pg))]
-pub struct PracticeSchedule {
-    pub id: i32,
-    pub current_practice_day: NaiveDateTime,
-    pub next_practice_day: NaiveDateTime,
-}
-
-#[derive(Insertable)]
-#[diesel(table_name = practice_schedule)]
-pub struct NewPracticeSchedule {
-    pub current_practice_day: NaiveDateTime,
-    pub next_practice_day: NaiveDateTime,
 }
 
 
@@ -47,7 +30,8 @@ pub struct FlashCard {
     pub question: String,
     pub answer: String,
     pub learning_topic_id: i32,
-    pub practice_schedule_id: i32,
+    pub current_practice_day: NaiveDateTime,
+    pub next_practice_day: NaiveDateTime,
 }
 
 #[derive(Insertable)]
@@ -56,7 +40,8 @@ pub struct NewFlashCard {
     pub question: String,
     pub answer: String,
     pub learning_topic_id: i32,
-    pub practice_schedule_id: i32,
+    pub current_practice_day: NaiveDateTime,
+    pub next_practice_day: NaiveDateTime,
 }
 
 

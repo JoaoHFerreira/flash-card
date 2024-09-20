@@ -6,7 +6,8 @@ diesel::table! {
         question -> Text,
         answer -> Text,
         learning_topic_id -> Int4,
-        practice_schedule_id -> Int4,
+        current_practice_day -> Timestamp,
+        next_practice_day -> Timestamp,
         created_at -> Nullable<Timestamp>,
     }
 }
@@ -30,22 +31,10 @@ diesel::table! {
     }
 }
 
-diesel::table! {
-    practice_schedule (id) {
-        id -> Int4,
-        current_practice_day -> Timestamp,
-        next_practice_day -> Timestamp,
-        created_at -> Nullable<Timestamp>,
-    }
-}
-
 diesel::joinable!(flash_card -> learning_topic (learning_topic_id));
-diesel::joinable!(flash_card -> practice_schedule (practice_schedule_id));
-diesel::joinable!(historical_acceptances -> flash_card (flash_card_id));
 
 diesel::allow_tables_to_appear_in_same_query!(
     flash_card,
     historical_acceptances,
     learning_topic,
-    practice_schedule,
 );

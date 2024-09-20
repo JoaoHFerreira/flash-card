@@ -13,6 +13,7 @@
 12. Export CSV for statistics
 13. Connect though API
 14. Flash Card Mechanic
+        REMOVE practice_schedule, make each flash card independent, also change flash card table..
         14.1.3. In the future the user wiill be able to train based in a given subject:
     14.2. Pontuation. Since is about personal devlopment the user will define their ponctuation with the flow below:
         14.2.5. Based on the user schore the next practicce_schedule will be scheduled;

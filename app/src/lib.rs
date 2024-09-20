@@ -6,7 +6,6 @@ use chrono::NaiveDateTime;
 use dotenvy::dotenv;
 use std::env;
 use self::models::{LearningTopic, NewLearningTopic};
-use self::models::{PracticeSchedule, NewPracticeSchedule};
 use self::models::{FlashCard, NewFlashCard};
 use self::models::{HistoricalAcceptances, NewHistoricalAcceptances};
 
@@ -32,28 +31,13 @@ pub fn create_learning_topic(conn: &mut PgConnection, subject: &str) -> Learning
         .expect("Error saving new post")
 }
 
-pub fn create_practice_schedule(
-    conn: &mut PgConnection,
-    current_practice_day: NaiveDateTime,
-    next_practice_day: NaiveDateTime,
-) -> PracticeSchedule {
-    use crate::schema::practice_schedule;
-
-    let new_practice_schedule = NewPracticeSchedule { current_practice_day, next_practice_day };
-
-    diesel::insert_into(practice_schedule::table)
-        .values(&new_practice_schedule)
-        .returning(PracticeSchedule::as_returning())
-        .get_result(conn)
-        .expect("Error saving new post")
-}
-
 pub fn create_flash_card(
     conn: &mut PgConnection,
     question: String,
     answer: String,
     learning_topic_id: i32,
-    practice_schedule_id: i32,
+    current_practice_day: NaiveDateTime,
+    next_practice_day: NaiveDateTime,
 ) -> FlashCard {
     use crate::schema::flash_card;
 
@@ -61,7 +45,8 @@ pub fn create_flash_card(
         question,
         answer,
         learning_topic_id,
-        practice_schedule_id 
+        current_practice_day,
+        next_practice_day, 
     };
 
     diesel::insert_into(flash_card::table)
@@ -69,6 +54,23 @@ pub fn create_flash_card(
         .returning(FlashCard::as_returning())
         .get_result(conn)
         .expect("Error saving new post")
+}
+
+pub fn update_flash_card_by_id(
+    conn: &mut PgConnection,
+    id: i32,
+    current_practice_day: NaiveDateTime,
+    next_practice_day: NaiveDateTime,
+) -> Result<FlashCard, diesel::result::Error> { 
+    use crate::schema::flash_card::dsl::*;
+
+    diesel::update(flash_card.filter(id.eq(id)))
+        .set((
+            current_practice_day.eq(current_practice_day),
+            next_practice_day.eq(next_practice_day),
+        ))
+        .returning(FlashCard::as_returning()) 
+        .get_result(conn)
 }
 
 pub fn batch_flash_card(
