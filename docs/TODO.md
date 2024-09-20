@@ -2,8 +2,7 @@
 
 
 8. flash_methods
-    8.3 Read
-    8.4 Read Batch
+    8.3 Discover how to perform joins and print then
 
 
 11. Add while for menu:

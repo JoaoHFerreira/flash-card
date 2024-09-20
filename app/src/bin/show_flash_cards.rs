@@ -7,16 +7,19 @@ fn main() {
     use self::schema::flash_card::dsl::*;
     use self::schema::practice_schedule::dsl::*;
     use diesel::dsl::sql;
+    use diesel::dsl::now;
+
 
     let connection = &mut establish_connection();
     let limit = 30;
     
     let results = flash_card
         .inner_join(practice_schedule)
+        .filter(current_practice_day.le(now))
         .order_by(sql::<diesel::sql_types::Text>("RANDOM()"))
         .limit(limit)
         .select(FlashCard::as_select())
-        .load::<FlashCard>(connection)
+        .load(connection)
         .expect("Error loading inner join");
 
     for card in results {
