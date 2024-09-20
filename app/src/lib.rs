@@ -5,7 +5,6 @@ use diesel::prelude::*;
 use chrono::NaiveDateTime;
 use dotenvy::dotenv;
 use std::env;
-use self::models::{NewPost, Post};
 use self::models::{LearningTopic, NewLearningTopic};
 use self::models::{PracticeSchedule, NewPracticeSchedule};
 use self::models::{FlashCard, NewFlashCard};
@@ -19,18 +18,6 @@ pub fn establish_connection() -> PgConnection {
         .unwrap_or_else(|_| panic!("Error connecting to {}", database_url))
 }
 
-
-pub fn create_post(conn: &mut PgConnection, title: &str, body: &str) -> Post {
-    use crate::schema::posts;
-
-    let new_post = NewPost { title, body };
-
-    diesel::insert_into(posts::table)
-        .values(&new_post)
-        .returning(Post::as_returning())
-        .get_result(conn)
-        .expect("Error saving new post")
-}
 
 pub fn create_learning_topic(conn: &mut PgConnection, subject: &str) -> LearningTopic {
     use crate::schema::learning_topic;
