@@ -33,6 +33,7 @@
 3. Access bash in container for debugging:
    ```
    docker-compose exec flash-card bash
+   docker-compose run --rm -it flash-card bash
    ```
 
 4. Stop containers:
