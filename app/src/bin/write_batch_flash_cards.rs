@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use std::process;
 use diesel::prelude::*;
 use csv::Reader;
-use chrono::Utc;
+use chrono::{Utc, Duration};
 use crate::models::NewFlashCard;
 use crate::models::LearningTopic;
 use crate::schema::learning_topic;
@@ -23,15 +23,10 @@ fn main() {
         .map(|topic| (topic.subject, topic.id))
         .collect();
 
-    // Create a single practice schedule for all flashcards
+    
     let current_practice_day = Utc::now().naive_utc();
-    let practice_schedule = create_practice_schedule(
-        connection,
-        current_practice_day,
-        current_practice_day, // Next practice day is the same as current for simplicity
-    );
-
-    // Read CSV file and prepare batch insert
+    let next_practice_day = current_practice_day + Duration::days(1);
+    
     let mut reader = Reader::from_path(file_path).expect("Could not open file");
     let mut new_flash_cards: Vec<NewFlashCard> = Vec::new();
 
@@ -56,7 +51,8 @@ fn main() {
             question: question.to_string(),
             answer: answer.to_string(),
             learning_topic_id,
-            practice_schedule_id: practice_schedule.id,
+            current_practice_day,
+            next_practice_day,
         };
 
         new_flash_cards.push(new_flash_card);

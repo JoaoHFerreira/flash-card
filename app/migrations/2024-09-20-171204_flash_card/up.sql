@@ -4,5 +4,7 @@ CREATE TABLE flash_card (
     question TEXT NOT NULL,
     answer TEXT NOT NULL,
     learning_topic_id INTEGER REFERENCES learning_topic(id) NOT NULL,
-    practice_schedule_id INTEGER REFERENCES practice_schedule(id) NOT NULL
+    current_practice_day TIMESTAMP NOT NULL,
+    next_practice_day TIMESTAMP NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )
