@@ -86,3 +86,11 @@ The flow is:
 3. After everything ok in previous step, add the action and test;
 4. After everything ok in previous step, then we are ready to create the PR
 
+
+## 3. Testing API
+
+```
+curl -X POST http://localhost:8000/learning_topic \
+-H "Content-Type: application/json" \
+-d '{"subject": "API"}'
+```
