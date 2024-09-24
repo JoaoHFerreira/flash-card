@@ -33,6 +33,7 @@
 3. Access bash in container for debugging:
    ```
    docker-compose exec flash-card bash
+   docker-compose run --rm -it flash-card bash
    ```
 
 4. Stop containers:
@@ -85,3 +86,11 @@ The flow is:
 3. After everything ok in previous step, add the action and test;
 4. After everything ok in previous step, then we are ready to create the PR
 
+
+## 3. Testing API
+
+```
+curl -X POST http://localhost:8000/learning_topic \
+-H "Content-Type: application/json" \
+-d '{"subject": "API"}'
+```

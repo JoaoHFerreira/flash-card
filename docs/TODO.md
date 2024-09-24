@@ -1,30 +1,10 @@
 # Todo in the dev order
 
 
-8. flash_methods
-    8.3 Discover how to perform joins and print then
-
-
-11. Add while for menu:
-    11.1. Menu must have:
-        11.1.1. Insert Part;
-        11.1.2. Tests Part;
-        11.1.3. Statistcs Part;
-12. Export CSV for statistics
-13. Connect though API
-14. Flash Card Mechanic
-        REMOVE practice_schedule, make each flash card independent, also change flash card table..
-        14.1.3. In the future the user wiill be able to train based in a given subject:
-    14.2. Pontuation. Since is about personal devlopment the user will define their ponctuation with the flow below:
-        14.2.5. Based on the user schore the next practicce_schedule will be scheduled;
-            14.2.5.1 Algorithm for that will be defined;
-        14.2.6. The result wiill be stored in the historical_acceptances table to see further consults;
-
-After run todos
-1. All tables are using serial for ids, i need to understand how to properly use UUID
-2. Add created_at and updated_at to the tables;
-3. Beautify the code;
-4. Add error handlers;
-5. Convert it into API
-6. AI features
-7. Since is concepts the historical part should be a range and not a bool true and falase.
+1. Dummy Endpoint API DONE
+2. Implement create_flash cards;
+3. Implement list_flash_cards;
+4. Implement implement create_batch_flash_cards;
+5. IMplement Create suject;
+6. IMplement list subject;
+7. Create interval learning algorithm;

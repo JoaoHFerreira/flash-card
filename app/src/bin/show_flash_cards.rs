@@ -35,8 +35,8 @@ fn main() {
         );
 
         let current_practice_day = card.next_practice_day;
-        let next_practice_day = current_practice_day + Duration::days(1);
-        
+        let next_practice_day = current_practice_day + Duration::days(20);
+
         let _ = update_flash_card_by_id(
             connection,
             card.id,
@@ -56,7 +56,7 @@ fn get_daily_flash_cards() -> Vec<FlashCard> {
     use diesel::dsl::now;
 
     let connection = &mut establish_connection();
-    let limit = 1;
+    let limit = 30;
 
     flash_card
         .filter(current_practice_day.le(now))

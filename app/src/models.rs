@@ -1,12 +1,13 @@
 use diesel::prelude::*;
+use rocket::serde::Serialize;
 use crate::schema::{learning_topic};
 use crate::schema::{flash_card};
 use crate::schema::{historical_acceptances};
 use chrono::NaiveDateTime;
 
 
-
-#[derive(Queryable, Selectable)]
+#[derive(Queryable, Selectable, Serialize)]
+#[serde(crate = "rocket::serde")]
 #[diesel(table_name = crate::schema::learning_topic)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct LearningTopic {

@@ -58,19 +58,18 @@ pub fn create_flash_card(
 
 pub fn update_flash_card_by_id(
     conn: &mut PgConnection,
-    id: i32,
-    current_practice_day: NaiveDateTime,
-    next_practice_day: NaiveDateTime,
-) -> Result<FlashCard, diesel::result::Error> { 
+    card_id: i32,
+    new_current_practice_day: NaiveDateTime,
+    new_next_practice_day: NaiveDateTime,
+) -> Result<usize, diesel::result::Error> {
     use crate::schema::flash_card::dsl::*;
 
-    diesel::update(flash_card.filter(id.eq(id)))
+    diesel::update(flash_card.find(card_id))
         .set((
-            current_practice_day.eq(current_practice_day),
-            next_practice_day.eq(next_practice_day),
+            current_practice_day.eq(new_current_practice_day),
+            next_practice_day.eq(new_next_practice_day),
         ))
-        .returning(FlashCard::as_returning()) 
-        .get_result(conn)
+        .execute(conn)
 }
 
 pub fn batch_flash_card(
