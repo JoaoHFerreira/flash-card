@@ -7,5 +7,11 @@ fn hello() -> &'static str {
 
 #[launch]
 fn rocket() -> _ {
-    rocket::build().mount("/", routes![hello])
+    rocket::build()
+        .mount("/", routes![hello])
+        .configure(rocket::Config {
+            port: 8000,
+            address: [0, 0, 0, 0].into(),
+            ..Default::default()
+        })
 }

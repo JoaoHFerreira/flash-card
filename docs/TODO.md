@@ -1,7 +1,7 @@
 # Todo in the dev order
 
 
-1. Dummy Endpoint API;
+1. Dummy Endpoint API DONE
 2. Implement create_flash cards;
 3. Implement list_flash_cards;
 4. Implement implement create_batch_flash_cards;
