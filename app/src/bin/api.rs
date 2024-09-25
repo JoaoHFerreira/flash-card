@@ -43,6 +43,20 @@ fn add_flash_card(new_flash_card: Json<NewFlashCardRequest>) -> Result<Json<Flas
     Ok(Json(flash_card))
 }
 
+#[get("/flash_cards")]
+fn get_flash_cards() -> Result<Json<Vec<FlashCard>>, Status> {
+    use crate::models::FlashCard;
+    use crate::schema::flash_card;
+
+    let conn = &mut establish_connection();
+
+    let flash_cards = flash_card::table
+    .load::<FlashCard>(conn)
+    .expect("Error loading learning topics");
+
+    Ok(Json(flash_cards))
+}
+
 #[get("/")]
 fn hello() -> &'static str {
     "Hello, World!"
@@ -55,6 +69,7 @@ fn rocket() -> _ {
             hello, 
             add_learning_topic,
             add_flash_card,
+            get_flash_cards,
             ]
         )
         .configure(rocket::Config {

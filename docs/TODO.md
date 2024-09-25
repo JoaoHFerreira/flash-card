@@ -2,7 +2,7 @@
 
 
 1. Dummy Endpoint API DONE
-2. Implement create_flash cards;
+2. Implement create_flash cards; DONE
 3. Implement list_flash_cards;
 4. Implement implement create_batch_flash_cards;
 5. IMplement Create suject;

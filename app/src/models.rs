@@ -41,6 +41,7 @@ pub struct FlashCard {
     pub learning_topic_id: i32,
     pub current_practice_day: NaiveDateTime,
     pub next_practice_day: NaiveDateTime,
+    pub created_at: Option<NaiveDateTime>,
 }
 
 #[derive(Insertable)]
