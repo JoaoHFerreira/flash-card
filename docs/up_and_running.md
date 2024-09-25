@@ -89,8 +89,20 @@ The flow is:
 
 ## 3. Testing API
 
+1. Learning Topic
 ```
 curl -X POST http://localhost:8000/learning_topic \
 -H "Content-Type: application/json" \
 -d '{"subject": "API"}'
+```
+
+2. Flash Card
+```
+curl -X POST http://localhost:8000/flash_card \
+-H "Content-Type: application/json" \
+-d '{
+    "question": "What is Rust?",
+    "answer": "Rust is a systems programming language.",
+    "learning_topic": "Programming"
+}'
 ```

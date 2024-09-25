@@ -1,9 +1,10 @@
 use diesel::prelude::*;
-use rocket::serde::Serialize;
+use rocket::serde::{Serialize, Deserialize};
 use crate::schema::{learning_topic};
 use crate::schema::{flash_card};
 use crate::schema::{historical_acceptances};
 use chrono::NaiveDateTime;
+
 
 
 #[derive(Queryable, Selectable, Serialize)]
@@ -22,8 +23,15 @@ pub struct NewLearningTopic<'a> {
     pub subject: &'a str,
 }
 
+#[derive(Deserialize)]
+#[serde(crate = "rocket::serde")]
+pub struct NewLearningTopicRequest {
+    pub subject: String,
+}
 
-#[derive(Queryable, Selectable)]
+
+#[derive(Queryable, Selectable, Serialize)]
+#[serde(crate = "rocket::serde")]
 #[diesel(table_name = crate::schema::flash_card)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct FlashCard {
@@ -43,6 +51,14 @@ pub struct NewFlashCard {
     pub learning_topic_id: i32,
     pub current_practice_day: NaiveDateTime,
     pub next_practice_day: NaiveDateTime,
+}
+
+#[derive(Deserialize)]
+#[serde(crate = "rocket::serde")]
+pub struct NewFlashCardRequest {
+    pub question: String,
+    pub answer: String,
+    pub learning_topic: String,
 }
 
 
