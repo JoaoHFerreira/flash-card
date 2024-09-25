@@ -96,7 +96,12 @@ curl -X POST http://localhost:8000/learning_topic \
 -d '{"subject": "API"}'
 ```
 
+````
+curl -X GET http://localhost:8000/learning_topic
+```
+
 2. Flash Card
+POST
 ```
 curl -X POST http://localhost:8000/flash_card \
 -H "Content-Type: application/json" \
@@ -105,4 +110,14 @@ curl -X POST http://localhost:8000/flash_card \
     "answer": "Rust is a systems programming language.",
     "learning_topic": "Programming"
 }'
+```
+
+GET
+```
+ curl -X GET http://localhost:8000/flash_card
+```
+
+BATCH
+```
+curl -X POST -F "file=@../app/csv_files/test.csv" http://localhost:8000/batch_csv_import
 ```
