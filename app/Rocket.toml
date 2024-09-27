@@ -1,5 +1,11 @@
-[global]
-max_data_size = 10_000_000  # Adjust this value as needed
+[default.limits]
+"form" = "64 kB"          # Form submissions
+"json" = "1 MiB"          # JSON payloads
+"msgpack" = "2 MiB"       # MsgPack payloads
+"file/jpg" = "5 MiB"      # JPG file uploads
+"file/csv" = "10 MiB"     # Increase limit for CSV file uploads
+"multipart/form-data" = "10 MiB"  # Increase limit for multipart forms
+
 
 [development]
 address = "localhost"
