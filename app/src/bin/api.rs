@@ -46,6 +46,17 @@ async fn batch_csv_import(_content_type: &ContentType, csv_data: Data<'_>) {
         }
     }
 
+    // let records: Vec<Record> = csv_string
+    // .split('\n')
+    // .map(|line| line.split(',').collect::<Vec<&str>>())
+    // .filter(|fields| fields.len() == 3)
+    // .map(|fields| Record {
+    //     question: fields[0].to_string(),
+    //     answer: fields[1].to_string(),
+    //     subject: fields[2].to_string(),
+    // })
+    // .collect();
+
     // Print the records
     for record in &records {
         println!("{:?}", record);
