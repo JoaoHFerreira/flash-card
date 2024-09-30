@@ -1,20 +1,80 @@
 #[macro_use] extern crate rocket;
-use rocket::serde::{json::Json};
+use rocket::serde::json::Json;
 use rocket::http::Status;
 use chrono::{Utc, Duration};
 use self::models::*;
 use flash_card::*;
 use diesel::prelude::*;
+use serde::Deserialize;
+use rocket::http::ContentType;
+use rocket::post;
+use rocket::data::{Data, ToByteUnit};
+use serde::Serialize;
 use std::collections::HashMap;
-use csv::Reader;
-use std::io::Cursor;
-use rocket::Data;
-use rocket::data::ByteUnit;
-use rocket::tokio::io::AsyncReadExt;
+use std::process;
 
 
 
+#[post("/batch_csv_import", data = "<csv_data>")]
+async fn batch_csv_import(_content_type: &ContentType, csv_data: Data<'_>) {
+    use crate::schema::learning_topic;
 
+    let bytes = csv_data.open(10.megabytes()).into_bytes().await
+        .expect("Failed to read request data");
+
+    let csv_string = String::from_utf8_lossy(&bytes.value);
+
+    let connection = &mut establish_connection();
+    let all_topics: Vec<LearningTopic> = learning_topic::table
+        .load::<LearningTopic>(connection)
+        .expect("Error loading learning topics");
+
+    let topic_map: HashMap<String, i32> = all_topics
+        .into_iter()
+        .map(|topic| (topic.subject, topic.id))
+        .collect();
+
+    
+    let current_practice_day = Utc::now().naive_utc();
+    let next_practice_day = current_practice_day + Duration::days(1);
+
+
+    let mut new_flash_cards: Vec<NewFlashCard> = Vec::new();
+    let lines = csv_string.split("\n");
+    for line in lines {
+        let fields: Vec<&str> = line.split(",").collect();
+        if fields.len() == 3 {
+
+            let subject = fields[2].trim();
+
+            let learning_topic_id = match topic_map.get(subject) {
+                Some(&id) => id,
+                None => {
+                    eprintln!("Error: Unknown topic '{}' Terminating program.", subject);
+                    process::exit(1);
+                }
+            };
+        
+            let new_flash_card = NewFlashCard {
+                question: fields[0].to_string(),
+                answer: fields[1].to_string(),
+                learning_topic_id,
+                current_practice_day,
+                next_practice_day,
+            };
+
+            new_flash_cards.push(new_flash_card);
+
+
+        } else {
+            println!("Invalid record: {}", line);
+        }
+    }
+
+    batch_flash_card(connection, new_flash_cards);
+    println!("Batch was inserted")
+
+}
 
 #[post("/learning_topic", data = "<new_subject>")]
 fn add_learning_topic(new_subject: Json<NewLearningTopicRequest>) -> Result<Json<LearningTopic>, Status> {
@@ -64,63 +124,6 @@ fn add_flash_card(new_flash_card: Json<NewFlashCardRequest>) -> Result<Json<Flas
     );
     
     Ok(Json(flash_card))
-}
-
-#[post("/batch_csv_import", data = "<file>")]
-async fn batch_csv_import(file: Data<'_>) -> Result<Json<Vec<FlashCard>>, Status> {
-    use crate::models::{NewFlashCard, LearningTopic};
-    use crate::schema::learning_topic;
-
-    let conn = &mut establish_connection();
-
-    // Load learning topics...
-    let all_topics: Vec<LearningTopic> = learning_topic::table
-        .load::<LearningTopic>(conn)
-        .expect("Error loading learning topics");
-
-    let topic_map: HashMap<String, i32> = all_topics
-        .into_iter()
-        .map(|topic| (topic.subject, topic.id))
-        .collect();
-
-    let current_practice_day = Utc::now().naive_utc();
-    let next_practice_day = current_practice_day + Duration::days(1);
-
-    let mut buffer = Vec::new();
-    
-    // Await the read_to_end operation
-    file.open(ByteUnit::default()).read_to_end(&mut buffer)
-        .await.map_err(|_| Status::InternalServerError)?;
-
-    let mut rdr = Reader::from_reader(Cursor::new(buffer));
-    let mut new_flash_cards: Vec<NewFlashCard> = Vec::new();
-
-    for result in rdr.records() {
-        let record = result.map_err(|_| Status::BadRequest)?;
-        if record.len() < 3 {
-            return Err(Status::BadRequest);
-        }
-
-        let question = &record[0];
-        let answer = &record[1];
-        let subject = &record[2];
-
-        let learning_topic_id = *topic_map.get(subject).ok_or(Status::BadRequest)?;
-
-        let new_flash_card = NewFlashCard {
-            question: question.to_string(),
-            answer: answer.to_string(),
-            learning_topic_id,
-            current_practice_day,
-            next_practice_day,
-        };
-        new_flash_cards.push(new_flash_card);
-    }
-
-
-    let inserted_cards = batch_flash_card(conn, new_flash_cards);
-
-    Ok(Json(inserted_cards))
 }
 
 
