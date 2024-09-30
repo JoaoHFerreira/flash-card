@@ -10,57 +10,70 @@ use rocket::http::ContentType;
 use rocket::post;
 use rocket::data::{Data, ToByteUnit};
 use serde::Serialize;
-use csv;
+use std::collections::HashMap;
+use std::process;
 
 
-
-#[derive(Debug)] // Added for printing the struct
-struct Record {
-    question: String,
-    answer: String,
-    subject: String,
-}
 
 #[post("/batch_csv_import", data = "<csv_data>")]
 async fn batch_csv_import(_content_type: &ContentType, csv_data: Data<'_>) {
+    use crate::schema::learning_topic;
+
     let bytes = csv_data.open(10.megabytes()).into_bytes().await
         .expect("Failed to read request data");
 
     let csv_string = String::from_utf8_lossy(&bytes.value);
 
-    println!("Raw CSV data: {}", csv_string); // Print the raw data
+    let connection = &mut establish_connection();
+    let all_topics: Vec<LearningTopic> = learning_topic::table
+        .load::<LearningTopic>(connection)
+        .expect("Error loading learning topics");
 
-    let mut records = Vec::new();
+    let topic_map: HashMap<String, i32> = all_topics
+        .into_iter()
+        .map(|topic| (topic.subject, topic.id))
+        .collect();
 
+    
+    let current_practice_day = Utc::now().naive_utc();
+    let next_practice_day = current_practice_day + Duration::days(1);
+
+
+    let mut new_flash_cards: Vec<NewFlashCard> = Vec::new();
     let lines = csv_string.split("\n");
     for line in lines {
         let fields: Vec<&str> = line.split(",").collect();
         if fields.len() == 3 {
-            records.push(Record {
+
+            let subject = fields[2].trim();
+
+            let learning_topic_id = match topic_map.get(subject) {
+                Some(&id) => id,
+                None => {
+                    eprintln!("Error: Unknown topic '{}' Terminating program.", subject);
+                    process::exit(1);
+                }
+            };
+        
+            let new_flash_card = NewFlashCard {
                 question: fields[0].to_string(),
                 answer: fields[1].to_string(),
-                subject: fields[2].to_string(),
-            });
+                learning_topic_id,
+                current_practice_day,
+                next_practice_day,
+            };
+
+            new_flash_cards.push(new_flash_card);
+
+
         } else {
             println!("Invalid record: {}", line);
         }
     }
 
-    // let records: Vec<Record> = csv_string
-    // .split('\n')
-    // .map(|line| line.split(',').collect::<Vec<&str>>())
-    // .filter(|fields| fields.len() == 3)
-    // .map(|fields| Record {
-    //     question: fields[0].to_string(),
-    //     answer: fields[1].to_string(),
-    //     subject: fields[2].to_string(),
-    // })
-    // .collect();
+    batch_flash_card(connection, new_flash_cards);
+    println!("Batch was inserted")
 
-    // Print the records
-    for record in &records {
-        println!("{:?}", record);
-    }
 }
 
 #[post("/learning_topic", data = "<new_subject>")]
