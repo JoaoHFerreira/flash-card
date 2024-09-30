@@ -1,125 +1,96 @@
-# Key Docker and Rust Commands
+# Up And Running
 
-# Table of Contents
-1. [Key Docker and Rust Commands](#key-docker-and-rust-commands)
-   - [Docker Commands](#docker-commands)
-     1. [Build and start containers](#build-and-start-containers)
-     2. [Run Rust code](#run-rust-code)
-     3. [Access bash in container for debugging](#access-bash-in-container-for-debugging)
-     4. [Stop containers](#stop-containers)
-     5. [View container logs](#view-container-logs)
-   - [Database Operations (Diesel ORM)](#database-operations-diesel-orm)
-     1. [Set up Diesel ORM](#set-up-diesel-orm)
-     2. [Generate new migration](#generate-new-migration)
-     3. [Run migrations](#run-migrations)
-     4. [Undo last migration](#undo-last-migration)
-     5. [Connect to database](#connect-to-database)
-2. [Creating a New Action](#creating-a-new-action)
+This document provides an overview of the available Makefile commands for managing the Docker environment and interacting with the API endpoints. Each command is executed using `make <command_name>`.
 
+## Commands
 
+### Docker Commands
 
-## Docker Commands
+1. **up**
+   - Builds and starts all Docker services defined in `docker/docker-compose.yml`.
+   - **Usage:**
+     ```sh
+     make up
+     ```
+   
+2. **psql**
+   - Opens a PostgreSQL command line interface within the running `db` container.
+   - **Usage:**
+     ```sh
+     make psql
+     ```
 
-1. Build and start containers:
-   ```
-   docker-compose up --build
-   ```
+### API Commands
 
-2. Run Rust code:
-   ```
-   docker-compose run --rm -it flash-card cargo run
-   ```
+1. **api-hello**
+   - Sends a GET request to the root API endpoint.
+   - **Usage:**
+     ```sh
+     make api-hello
+     ```
+   
+2. **api-get-flash-cards**
+   - Retrieves all flashcards by sending a GET request to the `/flash_card` endpoint.
+   - **Usage:**
+     ```sh
+     make api-get-flash-cards
+     ```
 
-3. Access bash in container for debugging:
-   ```
-   docker-compose exec flash-card bash
-   docker-compose run --rm -it flash-card bash
-   ```
+3. **api-add-flash-card**
+   - Adds a new flashcard using a POST request to the `/flash_card` endpoint.
+   - **Usage:**
+     ```sh
+     make api-add-flash-card
+     ```
+   - Example request payload:
+     ```json
+     {
+       "question": "What is Rust?",
+       "answer": "Rust is a systems programming language.",
+       "learning_topic": "Programming"
+     }
+     ```
 
-4. Stop containers:
-   ```
-   docker-compose down
-   ```
+4. **api-batch-flash-card**
+   - Uploads a CSV file of flashcards using a POST request to the `/batch_csv_import` endpoint.
+   - **Usage:**
+     ```sh
+     make api-batch-flash-card
+     ```
+   - The CSV file is expected to be located at `./app/csv_files/test.csv`.
 
-5. View container logs:
-   ```
-   docker-compose logs
-   ```
+5. **api-get-learning-topic**
+   - Retrieves all learning topics by sending a GET request to the `/learning_topic` endpoint.
+   - **Usage:**
+     ```sh
+     make api-get-learning-topic
+     ```
 
-## Database Operations (Diesel ORM)
+6. **api-add-learning-topic**
+   - Adds a new learning topic using a POST request to the `/learning_topic` endpoint.
+   - **Usage:**
+     ```sh
+     make api-add-learning-topic
+     ```
+   - Example request payload:
+     ```json
+     {
+       "subject": "API"
+     }
+     ```
 
-1. Set up Diesel ORM:
-   ```
-   diesel migration setup
-   ```
+### Testing Commands
 
-2. Generate new migration:
-   ```
-   diesel migration generate create_posts
-   ```
-
-3. Run migrations:
-   ```
-   diesel migration run
-   ```
-
-4. Undo last migration:
-   ```
-   diesel migration redo
-   ```
-
-5. Connect to database:
-   ```
-   docker-compose exec db psql -U user -d flash_card_db
-   ```
-
-6. Running Entire App
-   ```
-   cargo run --bin flash_card
-   ```
-
-
-## 2. [Creating a New Action](#creating-a-new-action)
-The flow is:
-1. Create the models based on schema and test;
-2. After everything ok in previous step, add the funcionality into lib.rs and test;
-3. After everything ok in previous step, add the action and test;
-4. After everything ok in previous step, then we are ready to create the PR
-
-
-## 3. Testing API
-
-1. Learning Topic
-```
-curl -X POST http://localhost:8000/learning_topic \
--H "Content-Type: application/json" \
--d '{"subject": "API"}'
-```
-
-````
-curl -X GET http://localhost:8000/learning_topic
-```
-
-2. Flash Card
-POST
-```
-curl -X POST http://localhost:8000/flash_card \
--H "Content-Type: application/json" \
--d '{
-    "question": "What is Rust?",
-    "answer": "Rust is a systems programming language.",
-    "learning_topic": "Programming"
-}'
-```
-
-GET
-```
- curl -X GET http://localhost:8000/flash_card
-```
-
-BATCH
-```
-curl -X POST -F "file=@../app/csv_files/test.csv" http://localhost:8000/batch_csv_import
-```
-
-
+1. **api-test**
+   - Tests multiple API endpoints by sequentially calling:
+     - `api-hello`
+     - `api-get-flash-cards`
+     - `api-add-flash-card`
+     - `api-batch-flash-card`
+     - `api-get-learning-topic`
+     - `api-add-learning-topic`
+   - The script prints a summary of which endpoints succeeded or failed.
+   - **Usage:**
+     ```sh
+     make api-test
+     ```
