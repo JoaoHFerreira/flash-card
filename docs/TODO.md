@@ -1,10 +1,9 @@
-# Todo in the dev order
-
-
-1. Dummy Endpoint API DONE
-2. Implement create_flash cards; DONE
-3. Implement list_flash_cards; DONE
-6. IMplement list subject; DONE
-4. Implement implement create_batch_flash_cards;
-5. IMplement Create suject;
-7. Create interval learning algorithm;
+1. Update documentation regarding new database modeling and pointing to migrations, also upgrade database_modeling.md to be accordinlgy with what we have in migrations;
+2. Clean up everything  is not necessary;
+3. Create curl tests for each endpoint;
+4. Create makefile to accomplish follow:
+    4.1 connection to postgres;
+    4.2 start api;
+    4.3 curls one by one;
+    4.4 all curls at the same time;
+5. Pretify documentation;
