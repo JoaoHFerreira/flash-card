@@ -121,3 +121,5 @@ BATCH
 ```
 curl -X POST -F "file=@../app/csv_files/test.csv" http://localhost:8000/batch_csv_import
 ```
+
+
