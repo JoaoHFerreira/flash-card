@@ -1,9 +1,19 @@
-up:
-	docker-compose -f docker/docker-compose.yml build;
-	docker-compose -f docker/docker-compose.yml up;
+
+rust-debug:
+	docker-compose run --rm flash-card /bin/bash
+
+rust-up:
+	docker-compose.yml build;
+	docker-compose.yml up;
 
 psql:
-	docker-compose -f docker/docker-compose.yml exec db psql -U user -d flash_card_db
+	docker-compose exec db psql -U user -d flash_card_db
+
+psql-up:
+	docker-compose up db --detach
+
+psql-down:
+	docker-compose down db
 
 api-hello:
 	curl -X GET http://localhost:8000
@@ -54,3 +64,16 @@ api-test:
 	else \
 		echo "All endpoints tested successfully!"; \
 	fi
+
+
+scraper-build:
+	docker-compose build scrapy
+
+scraper-run:
+	docker-compose up scrapy
+
+scraper-debug:
+	docker-compose run --rm scrapy /bin/bash
+
+scraper-clean:
+	rm scrape/articles/*
