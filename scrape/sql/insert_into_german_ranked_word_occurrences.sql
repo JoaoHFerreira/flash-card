@@ -1,3 +1,4 @@
+INSERT INTO german_ranked_word_occurrences
 WITH ranked_words AS (
     SELECT
         TRIM(LOWER(word)) AS cleaned_word,
@@ -5,6 +6,7 @@ WITH ranked_words AS (
     FROM (
         SELECT unnest(regexp_split_to_array(content, '\s+')) AS word
         FROM wikipedia_articles
+        WHERE id LIKE 'https://de.%'
     ) AS words
     WHERE TRIM(word) <> ''
     AND word ~ '^[a-zA-Z]+$'
