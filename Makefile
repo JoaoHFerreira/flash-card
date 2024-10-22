@@ -70,7 +70,8 @@ scraper-build:
 	docker-compose build scrapy
 
 scraper-run:
-	docker-compose up scrapy
+	docker-compose run --rm scrapy python main.py $(command)
+
 
 scraper-debug:
 	docker-compose run --rm scrapy /bin/bash

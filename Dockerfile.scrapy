@@ -7,8 +7,8 @@ WORKDIR /scrape
 COPY /scrape /scrape
 
 
-RUN apt-get update && apt-get install -y postgresql-client \
-    && pip install --no-cache-dir scrapy psycopg2-binary
+RUN apt-get update && apt-get install -y postgresql-client && \
+     pip install --no-cache-dir scrapy psycopg2-binary
 
 
 # Set the environment variable to prevent Python from writing .pyc files to disk
@@ -16,4 +16,4 @@ ENV PYTHONDONTWRITEBYTECODE=1
 # Set the environment variable to buffer output
 ENV PYTHONUNBUFFERED=1
 
-CMD ["python", "scrape.py"]
+CMD ["python", "main.py"]
